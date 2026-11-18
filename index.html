@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-4IjU0FmHjA3fgUdsdEROyq4G1BzbA2rNJnEKGGm6JgU=' 'sha256-qgcukNXvRp/3poOM2mGVqANiW/EQO8HXS7Li6MRGNMk=' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://ooiauesumnqcjlulpteb.supabase.co; connect-src https://ooiauesumnqcjlulpteb.supabase.co wss://ooiauesumnqcjlulpteb.supabase.co https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-4IjU0FmHjA3fgUdsdEROyq4G1BzbA2rNJnEKGGm6JgU=' 'sha256-sTWqmO3UDz6IEJmEahwVMPRaDqCgsfecYBZdm/FW3XE=' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://ooiauesumnqcjlulpteb.supabase.co; connect-src https://ooiauesumnqcjlulpteb.supabase.co wss://ooiauesumnqcjlulpteb.supabase.co https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1D2A25">
@@ -1946,6 +1946,48 @@ document.addEventListener("visibilitychange",async()=>{if(document.visibilitySta
 {const st=document.createElement("style");st.textContent=`#cpView{position:fixed;inset:0;z-index:9999;overflow:auto;background:var(--bg,#111);padding:16px}#cpView .card{max-width:520px;margin:0 auto}
 .prqr{width:200px;max-width:70%;margin:6px auto;background:#fff;padding:6px;border-radius:8px}.prqr svg{display:block;width:100%;height:auto}
 .prcode{text-align:center;font-size:28px;font-weight:800;letter-spacing:.3em;margin:4px 0}`;document.head.appendChild(st)}
+/* ---------- friendlies: First to or Best of, in legs or sets (league matches stay best of 8, first to 5, 4-4 a draw) ---------- */
+(function(){const st=document.createElement("style");st.textContent=`.fmtp{display:grid;gap:10px;padding:12px;border-radius:14px;background:var(--sunk);margin:8px 0}
+.fmtp .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fmtp .seg .btn{min-height:48px}.fmtp .seg .btn[aria-pressed="true"]{background:var(--head);color:var(--head-ink);border-color:var(--head)}
+.fmtp .chk{display:flex;gap:10px;align-items:center;font-weight:700;min-height:44px;cursor:pointer}.fmtp .chk input{width:22px;height:22px;margin:0}
+.fmtp .fsum{font-weight:800;margin:0}`;document.head.appendChild(st)})();
+const FR={fmt:"first",n:3,sets:false,sl:3};
+const frWin=()=>FR.fmt==="best"?(FR.n+1)/2:FR.n;
+function frLabel(fmt,win,sl,short){const n=fmt==="best"?2*win-1:win,t=fmt==="best"?`Best of ${n}`:`First to ${n}`;
+  if(sl)return short?`${t} sets`:`${t} set${n>1?"s":""} (each set first to ${sl} leg${sl>1?"s":""})`;return `${t} leg${n>1?"s":""}`}
+function frOpts(){const o=[];if(FR.fmt==="best"){for(let i=1;i<=(FR.sets?13:21);i+=2)o.push(i)}else{for(let i=1;i<=(FR.sets?7:11);i++)o.push(i)}return o}
+function setScore(m){let a=0,b=0,sa=0,sb=0;for(const L of m.legs){if(L.winner==="A")a++;else if(L.winner==="B")b++;else continue;if(a>=m.sl){sa++;a=0;b=0}else if(b>=m.sl){sb++;a=0;b=0}}return {sa,sb,a,b}}
+const frBox=document.createElement("div");frBox.className="fmtp";frBox.id="frFmt";frBox.hidden=true;$("ftWrap").closest(".row").after(frBox);
+$("selKind").onchange=()=>{$("ftWrap").hidden=true;frBox.hidden=$("selKind").value!=="friendly"};
+function frDraw(){const o=frOpts();if(!o.includes(FR.n))FR.n=o.reduce((b,x)=>Math.abs(x-FR.n)<Math.abs(b-FR.n)?x:b,o[0]);
+  frBox.innerHTML=`<div class="seg" role="group" aria-label="Match format"><button type="button" class="btn" data-ff="first" aria-pressed="${FR.fmt==="first"}">First to</button><button type="button" class="btn" data-ff="best" aria-pressed="${FR.fmt==="best"}">Best of</button></div>
+    <div class="row"><label class="f">How many ${FR.sets?"sets":"legs"}<select data-fn>${o.map(x=>`<option ${x===FR.n?"selected":""}>${x}</option>`).join("")}</select></label>${FR.sets?`<label class="f">Each set is first to<select data-fsl>${[1,2,3,4,5,6].map(x=>`<option value="${x}" ${x===FR.sl?"selected":""}>${x} leg${x>1?"s":""}</option>`).join("")}</select></label>`:""}</div>
+    <label class="chk"><input type="checkbox" data-fs ${FR.sets?"checked":""}> Play sets (like the World Championship)</label>
+    <p class="fsum" aria-live="polite">${esc(frLabel(FR.fmt,frWin(),FR.sets?FR.sl:null))}</p>`;
+  frBox.querySelectorAll("[data-ff]").forEach(b=>b.onclick=()=>{if(FR.fmt===b.dataset.ff)return;FR.n=b.dataset.ff==="best"?FR.n*2-1:Math.max(1,Math.round((FR.n+1)/2));FR.fmt=b.dataset.ff;frDraw()});
+  frBox.querySelector("[data-fn]").onchange=e=>{FR.n=+e.target.value;frDraw()};
+  const s=frBox.querySelector("[data-fsl]");if(s)s.onchange=e=>{FR.sl=+e.target.value;frDraw()};
+  frBox.querySelector("[data-fs]").onchange=e=>{FR.sets=e.target.checked;FR.n=FR.fmt==="best"?5:3;frDraw()}}
+frDraw();
+const frFmt=()=>({win:frWin(),fmt:FR.fmt,sl:FR.sets?FR.sl:null});
+$("startBtn").onclick=()=>{if($("selKind").value!=="friendly")return _startLocal();const c=frCheck();if(!c)return;const f=frFmt();liveMsg="";
+  S.match={a:c.a,b:c.b,first:$("selFirst").value,date:$("matchDate").value||today(),legs:[{starter:$("selFirst").value,visits:[],winner:null}],submitted:false,win:f.win,draw:0,friendly:true,fmt:f.fmt,sl:f.sl};
+  typed="";dblSel=null;pendingCo=null;viewLeg=null;save();renderScorer()};
+$("startOnline").onclick=async()=>{if($("selKind").value!=="friendly")return _startOnline();const c=frCheck();if(!c)return;const f=frFmt();
+  if(!CODE){$("setupErr").textContent="Enter the league code on the Home page first.";return}$("startOnline").disabled=true;
+  const {data,error}=await rpcv("lg_v_live_create",{p_code:CODE,p_a:c.a,p_b:c.b,p_first:$("selFirst").value,p_date:$("matchDate").value||today(),p_side:$("selMe").value,p_meta:{win:f.win,draw:0,friendly:true,fmt:f.fmt,sl:f.sl}});
+  $("startOnline").disabled=false;if(error){$("setupErr").textContent="Couldn't start: "+error.message;return}
+  const {data:row}=await db.from("lg_live2").select("*").eq("code",data).maybeSingle();S.match=fromRow(row,$("selMe").value);typed="";dblSel=null;pendingCo=null;viewLeg=null;save();renderScorer()};
+const _fromRowF=fromRow;fromRow=function(row,side){const m=_fromRowF(row,side);const mt=(row.state&&row.state.meta)||{};if(mt.fmt==="best")m.fmt="best";if(+mt.sl>0)m.sl=+mt.sl;return m};
+const _legsWonF=legsWon;legsWon=function(p){const m=M();if(m&&m.sl>0){const s=setScore(m);return p==="A"?s.sa:s.sb}return _legsWonF(p)};
+const _renderScorerF=renderScorer;renderScorer=function(){_renderScorerF();const m=M();if(!m)return;
+  ["lgA","lgB"].forEach(id=>{const x=$(id)&&$(id).parentElement;if(x&&x.firstChild&&x.firstChild.nodeType===3)x.firstChild.textContent=m.friendly&&m.sl>0?"Sets ":"Legs "});
+  if(!m.friendly||m.cancelled)return;const done=matchDone();
+  let line=$("legLine").textContent.replace(/^Friendly · /,"").replace(/^First to \d+ · /,"");
+  if(m.sl>0&&!done){const s=setScore(m);line=line.replace(/^Leg \d+/,`Set ${s.sa+s.sb+1} · leg ${s.a+s.b+1} (${s.a}-${s.b})`)}
+  $("legLine").textContent="Friendly · "+frLabel(m.fmt||"first",m.win||3,m.sl>0?m.sl:null,true)+" · "+line;
+  if(done&&m.sl>0){const a=legsWon("A"),b=legsWon("B");$("doneText").textContent=`${a>b?m.a:m.b} wins ${Math.max(a,b)}-${Math.min(a,b)} in sets. Friendlies don't count in the league. Tap Close match when you're done.`}};
+
 })();
 </script>
 </body>
