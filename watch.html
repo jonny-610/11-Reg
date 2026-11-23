@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-yZANOArv3i/RhJ8zNS1wElFEsK2aVTXHCw0PEhVPf0Q='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://ooiauesumnqcjlulpteb.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Watch live · 11 EOD&amp;S Darts League</title>
+<meta name="description" content="Live scores from 11 EOD&S darts league matches.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600;700;800&display=swap">
+<style>
+:root{--bg:#0B0B0C;--panel:#17171A;--panel2:#202024;--ink:#FFFFFF;--muted:#A9A9B0;--red:#C8102E;--red2:#E8243F;--gold:#FFC94A;--line:#2C2C31;
+  --disp:Anton,Impact,"Arial Narrow",sans-serif;--body:Barlow,system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 var(--body);-webkit-text-size-adjust:100%}
+.top{display:flex;align-items:center;gap:10px;background:var(--red);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;border-bottom:5px solid #7A0A1C}
+.top .brand{font:400 22px var(--disp);letter-spacing:.04em}
+.top .brand small{font:800 12px var(--body);letter-spacing:.22em;margin-left:8px;opacity:.9}
+.live{margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--bg);padding:5px 11px;font:400 16px var(--disp);letter-spacing:.12em}
+.live i{width:10px;height:10px;border-radius:50%;background:#FF3B3B;animation:pulse 1.4s infinite}
+.live.off i{background:#777;animation:none}
+@keyframes pulse{50%{opacity:.25}}
+main{max-width:1200px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-inset-bottom))}
+.label{font:800 14px var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-align:center;margin:2px 0 12px}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pl{background:var(--panel);border-top:6px solid var(--line);padding:14px 14px 16px;min-width:0;position:relative;transition:border-color .2s,background .2s}
+.pl.on{border-top-color:var(--red2);background:var(--panel2)}
+.pl.on::after{content:"THROWING";position:absolute;top:10px;right:12px;font:800 11px var(--body);letter-spacing:.18em;color:var(--red2)}
+.pl .nm{font:400 clamp(20px,4.2vw,44px)/1.05 var(--disp);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:70px}
+.pl .rem{font:400 clamp(72px,17vw,200px)/.95 var(--disp);margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.pl .co{min-height:1.6em;font:800 clamp(14px,2.2vw,22px) var(--body);color:var(--gold);letter-spacing:.04em}
+.pl .row{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.pl .st span{display:block;font:800 11px var(--body);letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.pl .st b{font:400 clamp(22px,3.6vw,40px)/1.1 var(--disp)}
+.pl .st.legs b{color:var(--red2)}
+.line{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0;font:400 clamp(18px,3vw,30px) var(--disp);letter-spacing:.04em;text-transform:uppercase}
+.line .pill{background:var(--red);padding:2px 12px}
+.feed{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.feed .col{background:var(--panel);padding:10px 12px;min-width:0}
+.feed h3{margin:0 0 6px;font:800 12px var(--body);letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.feed ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.feed li{display:flex;justify-content:space-between;font:700 18px var(--body);font-variant-numeric:tabular-nums}
+.feed li .s{font-family:var(--disp);font-weight:400;font-size:22px}
+.feed li.big .s{color:var(--gold)}.feed li.bust .s{color:var(--muted);text-decoration:line-through}
+.feed li.co .s{color:var(--red2)}
+.result{background:var(--red);text-align:center;padding:16px;margin:14px 0;font:400 clamp(28px,6vw,60px) var(--disp);text-transform:uppercase}
+.result small{display:block;font:800 14px var(--body);letter-spacing:.18em}
+.list{display:grid;gap:10px}
+.mc{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;background:var(--panel);border-left:6px solid var(--red);padding:14px;color:var(--ink);text-decoration:none;min-height:64px}
+.mc:focus-visible,.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.mc .who{font:400 22px/1.1 var(--disp);text-transform:uppercase;overflow-wrap:anywhere}
+.mc .sc{font:400 30px var(--disp);color:var(--red2)}
+.mc .meta{grid-column:1/-1;font:700 13px var(--body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+h1{font:400 34px/1.05 var(--disp);text-transform:uppercase;margin:6px 0 6px}
+.note{color:var(--muted)}
+.empty{background:var(--panel);padding:20px;text-align:center}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font:800 15px var(--body);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+.btn.red{background:var(--red);border-color:var(--red)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;font-weight:800;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+body.tv .bar,body.tv .back{display:none}
+@media (max-width:520px){.pl{padding:10px 10px 12px}.pl.on::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--red2);top:12px;right:10px}.pl .nm{padding-right:16px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:22px}.pl .row{gap:10px}.feed li{font-size:15px}.feed li .s{font-size:18px}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="top"><div class="brand">11 EOD&amp;S <small>DARTS LEAGUE</small></div><div class="live off" id="liveTag"><i></i><span id="liveTxt">LIVE</span></div></div>
+<main>
+  <section id="listView" hidden>
+    <h1>Live matches</h1>
+    <p class="note">Online matches being played on the league site right now. Tap one to watch the score live.</p>
+    <div class="list" id="list"></div>
+    <div class="bar"><button class="btn red" id="shareList" type="button">Share this page</button><a class="btn" href="./">League site</a></div>
+  </section>
+  <section id="matchView" hidden>
+    <p class="label" id="label"></p>
+    <div class="result" id="result" hidden></div>
+    <div class="board" id="board"></div>
+    <div class="line" id="line"></div>
+    <div class="feed" id="feed"></div>
+    <div class="bar"><button class="btn red" id="share" type="button">Share watch link</button><button class="btn" id="tv" type="button">Clean view for streaming</button><a class="btn back" href="watch.html">All live matches</a></div>
+  </section>
+  <section id="missing" hidden><div class="empty"><h1>Match not found</h1><p class="note">The code may be wrong, or the match has been cleared.</p><a class="btn red" href="watch.html">See live matches</a></div></section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+const SB="https://ooiauesumnqcjlulpteb.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vaWF1ZXN1bW5xY2psdWxwdGViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0OTMzMDQsImV4cCI6MjEwODA2OTMwNH0.IJ8ERzNa9UO97qGB_uYIzvY5RU5Nfi5HA3MfMGd5_ck";
+const $=id=>document.getElementById(id),START=501;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+async function get(q){const r=await fetch(SB+"/rest/v1/lg_live2?"+q,{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});if(!r.ok)throw new Error("net");return r.json()}
+const qs=new URLSearchParams(location.search),CODE=(qs.get("m")||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6);
+if(qs.get("tv")==="1")document.body.classList.add("tv");
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800)}
+async function share(url,title){try{if(navigator.share){await navigator.share({title,text:title,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(url);toast("Link copied")}catch(_){prompt("Copy this link",url)}}
+// ---------- checkout suggestions ----------
+const SEG=[];for(let i=20;i>=1;i--)SEG.push({n:"T"+i,v:3*i});SEG.push({n:"Bull",v:50},{n:"25",v:25});for(let i=20;i>=1;i--)SEG.push({n:String(i),v:i});
+const DBL=[];for(let i=20;i>=1;i--)DBL.push({n:"D"+i,v:2*i});DBL.push({n:"Bull",v:50});
+const PREF=["D20","D16","D18","D10","D12","D8","Bull","D14","D4","D6","D2","D1"];
+const dRank=d=>{const i=PREF.indexOf(d.n);return i<0?20:i};
+function checkout(n){if(n>170||n<2)return null;let best=null;
+  const consider=path=>{const sc=path.length*100+dRank(path[path.length-1]);if(!best||sc<best.sc)best={sc,path}};
+  for(const d of DBL)if(d.v===n)consider([d]);if(best)return best.path.map(x=>x.n).join(" ");
+  for(const a of SEG)for(const d of DBL)if(a.v+d.v===n)consider([a,d]);if(best)return best.path.map(x=>x.n).join(" ");
+  for(const a of SEG)for(const b of SEG)for(const d of DBL)if(a.v+b.v+d.v===n){consider([a,b,d]);if(best&&best.sc<301)break}
+  return best?best.path.map(x=>x.n).join(" "):null}
+// ---------- match maths ----------
+function setScore(legs,sl){let a=0,b=0,sa=0,sb=0;for(const L of legs){if(L.winner==="A")a++;else if(L.winner==="B")b++;else continue;if(a>=sl){sa++;a=0;b=0}else if(b>=sl){sb++;a=0;b=0}}return {sa,sb,a,b}}
+function view(row){const st=row.state||{},mt=st.meta||{},legs=st.legs||[],L=legs[legs.length-1]||{visits:[],starter:"A"};
+  const win=+mt.win||5,draw=mt.draw==null?(mt.friendly||mt.tmatch?0:4):+mt.draw,sl=+mt.sl||0;
+  const won=p=>legs.filter(x=>x.winner===p).length,ss=sl?setScore(legs,sl):null;
+  const A=ss?ss.sa:won("A"),B=ss?ss.sb:won("B"),done=!!st.cancelled||A>=win||B>=win||(draw>0&&A===draw&&B===draw);
+  const turn=L.visits.length?(L.visits[L.visits.length-1].p==="A"?"B":"A"):L.starter;
+  const left=p=>{const v=L.visits.filter(x=>x.p===p);return v.length?v[v.length-1].left:START};
+  const stats=p=>{let d=0,pts=0,t80=0,hf=0;legs.forEach(l=>l.visits.filter(v=>v.p===p).forEach(v=>{d+=v.darts||3;pts+=v.pts||0;if((v.pts||0)>=180)t80++;if(v.co)hf=Math.max(hf,v.pts||0)}));return {avg:d?pts/d*3:null,t80,hf}};
+  const fmtN=mt.fmt==="best"?2*win-1:win,fmtT=(mt.fmt==="best"?"Best of ":"First to ")+fmtN+(sl?" sets":" legs");
+  const label=mt.tlabel?mt.tlabel:mt.friendly?"Friendly · "+fmtT:win===5&&draw===4?"League match · best of 8 legs":"League match · "+fmtT;
+  return {st,mt,legs,L,A,B,done,turn,left,stats,label,sl,ss,cancelled:!!st.cancelled,
+    leg:legs.length,setNo:ss?ss.sa+ss.sb+1:0,legInSet:ss?ss.a+ss.b+1:0}}
+function ago(t){const s=(Date.now()-new Date(t).getTime())/1000;return s<90?"just now":s<3600?Math.round(s/60)+" min ago":Math.round(s/3600)+" h ago"}
+// ---------- one match ----------
+let lastVer=-1,miss=0;
+function renderMatch(row){const v=view(row),na=row.player_a,nb=row.player_b;
+  document.title=`${na} v ${nb} · Watch live`;$("label").textContent=v.label+" · "+new Date(row.match_date+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+  const side=(p,nm)=>{const s=v.stats(p),rem=v.left(p),co=!v.done?checkout(rem):null,last=v.L.visits.filter(x=>x.p===p).slice(-1)[0];
+    return `<div class="pl ${!v.done&&v.turn===p?"on":""}"><div class="nm">${esc(nm)}</div><div class="rem">${rem}</div><div class="co">${co?esc(co):"&nbsp;"}</div>
+      <div class="row"><div class="st legs"><span>${v.sl?"Sets":"Legs"}</span><b>${p==="A"?v.A:v.B}</b></div>${v.sl?`<div class="st"><span>Legs in set</span><b>${p==="A"?v.ss.a:v.ss.b}</b></div>`:""}
+      <div class="st"><span>Average</span><b>${s.avg==null?"–":s.avg.toFixed(1)}</b></div><div class="st"><span>Last</span><b>${last?(last.bust?"Bust":last.pts):"–"}</b></div>
+      ${s.t80?`<div class="st"><span>180s</span><b>${s.t80}</b></div>`:""}${s.hf?`<div class="st"><span>Best out</span><b>${s.hf}</b></div>`:""}</div></div>`};
+  $("board").innerHTML=side("A",na)+side("B",nb);
+  if(v.done){const w=v.cancelled?null:v.A===v.B?null:(v.A>v.B?na:nb);$("result").hidden=false;
+    $("result").innerHTML=v.cancelled?"Match cancelled":(w?`${esc(w)} wins ${Math.max(v.A,v.B)}-${Math.min(v.A,v.B)}${v.sl?" in sets":""}`:`Draw ${v.A}-${v.B}`)+"<small>Full time</small>";$("line").innerHTML=""}
+  else{$("result").hidden=true;$("line").innerHTML=(v.sl?`<span class="pill">Set ${v.setNo}</span><span>Leg ${v.legInSet}</span>`:`<span class="pill">Leg ${v.leg}</span>`)+`<span>${esc(v.turn==="A"?na:nb)} to throw</span>`}
+  const col=(p,nm)=>{const vs=v.L.visits.filter(x=>x.p===p).slice(-6).reverse();return `<div class="col"><h3>${esc(nm)} · this leg</h3><ol>${vs.length?vs.map(x=>`<li class="${x.bust?"bust":x.co?"co":(x.pts>=100?"big":"")}"><span>${x.co?"Checkout":x.bust?"Bust":"Scored"}</span><span class="s">${x.pts||0}</span></li>`).join(""):'<li><span class="note">No darts yet</span></li>'}</ol></div>`};
+  $("feed").innerHTML=v.done?"":col("A",na)+col("B",nb);
+  const fresh=Date.now()-new Date(row.updated_at).getTime()<15*60e3;$("liveTag").classList.toggle("off",v.done||!fresh);$("liveTxt").textContent=v.done?"FULL TIME":fresh?"LIVE":"PAUSED"}
+async function pollMatch(){try{const r=await get("select=*&code=eq."+encodeURIComponent(CODE));miss=0;
+    if(!r.length){$("matchView").hidden=true;$("missing").hidden=false;return}$("missing").hidden=true;$("matchView").hidden=false;
+    if(r[0].version!==lastVer){lastVer=r[0].version;renderMatch(r[0])}else renderMatch(r[0])}
+  catch(_){miss++;if(miss>2){$("liveTag").classList.add("off");$("liveTxt").textContent="RECONNECTING"}}}
+// ---------- list ----------
+async function pollList(){try{const since=new Date(Date.now()-6*3600e3).toISOString();
+  const r=await get("select=code,player_a,player_b,state,updated_at,match_date&updated_at=gte."+encodeURIComponent(since)+"&order=updated_at.desc&limit=30");
+  const rows=r.filter(x=>x.state&&!x.state.cancelled&&(x.state.legs||[]).some(l=>l.visits&&l.visits.length));
+  const live=rows.filter(x=>!view(x).done);$("liveTag").classList.toggle("off",!live.length);$("liveTxt").textContent=live.length?live.length+" LIVE":"NONE LIVE";
+  $("list").innerHTML=rows.length?rows.map(x=>{const v=view(x);return `<a class="mc" href="watch.html?m=${esc(x.code)}"><span class="who">${esc(x.player_a)} v ${esc(x.player_b)}</span><span class="sc">${v.A}-${v.B}</span><span class="meta">${v.done?"Finished":"● Live"} · ${esc(v.label)} · ${ago(x.updated_at)}</span></a>`}).join("")
+    :'<div class="empty"><p><b>No matches being played right now.</b></p><p class="note">When someone starts an online match on the league site, it shows here. This page updates by itself.</p></div>'}catch(_){$("liveTxt").textContent="RECONNECTING"}}
+if(CODE){$("matchView").hidden=false;pollMatch();setInterval(()=>{if(document.visibilityState==="visible")pollMatch()},2000);
+  $("share").onclick=()=>share(location.origin+location.pathname+"?m="+CODE,"Watch live: 11 EOD&S darts");
+  $("tv").onclick=()=>{document.body.classList.toggle("tv");toast("Clean view on. Add ?tv=1 to the link to keep it")}}
+else{$("listView").hidden=false;pollList();setInterval(()=>{if(document.visibilityState==="visible")pollList()},5000);
+  $("shareList").onclick=()=>share(location.origin+location.pathname,"Watch 11 EOD&S darts live")}
+})();
+</script>
+</body>
+</html>
