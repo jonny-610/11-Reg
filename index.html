@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-4IjU0FmHjA3fgUdsdEROyq4G1BzbA2rNJnEKGGm6JgU=' 'sha256-FPaRP7WICjFDuIVUf2bF5JKk6HW9awmg9GGNL66Vy2A=' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://ooiauesumnqcjlulpteb.supabase.co; connect-src https://ooiauesumnqcjlulpteb.supabase.co wss://ooiauesumnqcjlulpteb.supabase.co https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-4IjU0FmHjA3fgUdsdEROyq4G1BzbA2rNJnEKGGm6JgU=' 'sha256-/S003hMEDoSzEFbLKwvcOcJ3MmfahT1gnIwZXbL0Oak=' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://ooiauesumnqcjlulpteb.supabase.co; connect-src https://ooiauesumnqcjlulpteb.supabase.co wss://ooiauesumnqcjlulpteb.supabase.co https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1D2A25">
@@ -1987,6 +1987,14 @@ const _renderScorerF=renderScorer;renderScorer=function(){_renderScorerF();const
   if(m.sl>0&&!done){const s=setScore(m);line=line.replace(/^Leg \d+/,`Set ${s.sa+s.sb+1} · leg ${s.a+s.b+1} (${s.a}-${s.b})`)}
   $("legLine").textContent="Friendly · "+frLabel(m.fmt||"first",m.win||3,m.sl>0?m.sl:null,true)+" · "+line;
   if(done&&m.sl>0){const a=legsWon("A"),b=legsWon("B");$("doneText").textContent=`${a>b?m.a:m.b} wins ${Math.max(a,b)}-${Math.min(a,b)} in sets. Friendlies don't count in the league. Tap Close match when you're done.`}};
+
+/* ===================== 11 Regt: Home links to the season sign-up page and Watch live ===================== */
+(function(){const st=document.createElement("style");st.textContent=`.s2home{border:2px solid var(--accent);background:var(--soft)}.s2home h2{margin:0 0 4px}.s2home .btn,.wlhome .btn{text-decoration:none}.wlhome .row{margin-top:10px}`;document.head.appendChild(st)})();
+const _renderHomeLinks=renderHome;renderHome=function(){_renderHomeLinks();const out=$("homeOut");if(!out||!loadedOnce)return;
+  if(SIGNUP>0&&!$("s2HomeCard")){const c=document.createElement("div");c.className="card s2home";c.id="s2HomeCard";
+    c.innerHTML=`<h2>🎯 Season ${SIGNUP} sign-up is open</h2><p class="note" style="margin:0">Season ${SIGNUP} starts Fri 11 Dec. First tournament Wed 16 Dec. Put your name down: it takes 2 minutes.</p><div class="row" style="margin-top:10px"><a class="btn primary" href="join.html">Sign up for Season ${SIGNUP}</a><a class="btn" href="${DISCORD}" target="_blank" rel="noopener">Join the Discord</a></div>`;out.prepend(c)}
+  if(!$("wlHomeCard")){const w=document.createElement("div");w.className="card wlhome";w.id="wlHomeCard";
+    w.innerHTML=`<h2 style="margin:0 0 4px">📺 Watch matches live</h2><p class="note" style="margin:0">See the score of any online match as it's played. Good for tournaments and streaming on Discord.</p><div class="row"><a class="btn" href="watch.html">Watch live</a></div>`;out.appendChild(w)}};
 
 })();
 </script>
